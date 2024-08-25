@@ -89,7 +89,7 @@ def main():
             solve()
             print("result done and written to 'output.json'.")
         case 'help':
-            print(f"1. Use '{sys.argv[0]} create n' to create input file for n students.\n2. Fill the input.json with data.\n3. Use '{sys.argv[0]} calc' to get the result in the 'output.json' file.")
+            print(f"1. Use '{sys.argv[0]} create n' to create input file for n students.\n2. Fill the 'input.json' file with data.\n3. Use '{sys.argv[0]} calc' to get the result in the 'output.json' file.")
         case _:
             print(f"{sys.argv[1]} is not a command. See '{sys.argv[0]} help'.")
 
