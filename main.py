@@ -3,7 +3,6 @@ import json
 from typing import List
 from munkres import Munkres
 
-
 class Student:
     count_of_students: int = 0
 
