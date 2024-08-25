@@ -44,10 +44,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Download executables
+      - name: Download Ubuntu executable
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/download-artifact@v2
         with:
-          name: executable-${{ matrix.os }}
+          name: executable-ubuntu-latest
+          path: ./ubuntu
+
+      - name: Download MacOS executable
+        if: matrix.os == 'macos-latest'
+        uses: actions/download-artifact@v2
+        with:
+          name: executable-macos-latest
+          path: ./macos
+
+      - name: Download Windows executable
+        if: matrix.os == 'windows-latest'
+        uses: actions/download-artifact@v2
+        with:
+          name: executable-windows-latest
+          path: ./windows
 
       - name: List files for debugging
         run: ls -R
@@ -63,10 +79,29 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload to Release
+      - name: Upload Ubuntu asset to Release
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: executable-${{ matrix.os }}/main
-          asset_name: main-${{ matrix.os }}
+          asset_path: ./ubuntu/main
+          asset_name: main-ubuntu-latest
+          asset_content_type: application/octet-stream
+
+      - name: Upload MacOS asset to Release
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./macos/main
+          asset_name: main-macos-latest
+          asset_content_type: application/octet-stream
+
+      - name: Upload Windows asset to Release
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./windows/main.exe
+          asset_name: main-windows-latest
           asset_content_type: application/octet-stream
