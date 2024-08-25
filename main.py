@@ -1,5 +1,4 @@
-import sys
-import json
+import sys, json
 from typing import List
 from munkres import Munkres
 
