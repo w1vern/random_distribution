@@ -1,25 +1,25 @@
 
 import sys
 import json
-from typing import List
 from munkres import Munkres
 
 input_file_name = 'input'
 output_file_name = 'output'
 
+
 class Student:
     count_of_students: int = 0
 
-    def __init__(self, name: str, choice: int, unavailable_places: str):
+    def __init__(self, name: str, choice: int, unavailable_places_str: str):
         self.name: str = name
         self.choice: int = choice
         self.computed_choice: int = 0
-        self.unavailable_places: List[bool] = self.__calc_unavailable(
-            unavailable_places)
+        self.unavailable_places: list[bool] = self.__calc_unavailable(
+            unavailable_places_str)
 
-    def __calc_unavailable(self, unavailable_places: str) -> List[bool]:
+    def __calc_unavailable(self, unavailable_places: str) -> list[bool]:
         result = [False] * Student.count_of_students
-        unavailable_places.replace(' ', '')
+        unavailable_places = unavailable_places.replace(' ', '')
         if unavailable_places == '':
             return result
         ranges = unavailable_places.split(',')
@@ -41,7 +41,7 @@ class Student:
     @staticmethod
     def from_dict(data):
         return Student(name=data["name"], choice=data["choice"],
-                       unavailable_places=data["unavailable_places"])
+                       unavailable_places_str=data["unavailable_places"])
 
     @staticmethod
     def students_to_json(students):
@@ -59,7 +59,8 @@ def init_json():
         file.write(json.dumps([{"name": f"{i+1}", "choice": 0, "unavailable_places": ""}
                    for i in range(Student.count_of_students)], indent=4))
 
-def upload_students() -> List[Student]:
+
+def upload_students() -> list[Student]:
     with open(input_file_name + '.json', 'r') as file:
         Student.count_of_students = len(json.load(file))
     with open(input_file_name + '.json', 'r') as file:
@@ -67,26 +68,28 @@ def upload_students() -> List[Student]:
     students = Student.students_from_json(data)
     return students
 
-def save_students(students : List[Student], style : int = 0):
+
+def save_students(students: list[Student], style: int = 0):
     match style:
         case 0:
-             with open(output_file_name + '.txt', 'w') as file:
+            with open(output_file_name + '.txt', 'w') as file:
                 for i in range(len(students)):
                     file.write(f"{i+1}. {students[i].name}\n")
         case 1:
             with open(output_file_name + '.json', 'w') as file:
                 file.write(Student.students_to_json(students))
 
-def solve(students : List[Student]) -> List[Student]:
+
+def solve(students: list[Student]) -> list[Student]:
     m = Munkres()
     size = len(students)
-    matrix = []
+    matrix: list[list[int]] = []
     for i in range(size):
         matrix.append([])
         for j in range(size):
             matrix[-1].append(abs(students[i].choice-j-1) +
                               1000000 * students[i].unavailable_places[j])
-    result = m.compute(matrix)
+    result = m.compute(matrix)  # type: ignore
     for i in range(Student.count_of_students):
         students[i].computed_choice = result[i][1] + 1
     students = list(sorted(students, key=lambda x: x.computed_choice))
